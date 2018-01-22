@@ -1,0 +1,18 @@
+body {
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+  margin: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+}
+
+hr {
+  width: 35%;
+}
+
+img {
+  display: inline-block;
+}
