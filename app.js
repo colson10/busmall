@@ -1,19 +1,15 @@
 'use strict';
 
-// Make array to store objects
 ShopItem.allItems = [];
 var recentItems = [];
 var totalClickCount = 0;
-// Make variable to access img elements by id
 
 var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
 var resultsSection = document.getElementById('results');
 
-
-// Make Constructor Function
-
+// Constructor
 function ShopItem(filepath, name) {
   this.filepath = filepath;
   this.name = name;
@@ -22,11 +18,10 @@ function ShopItem(filepath, name) {
   ShopItem.allItems.push(this);
 }
 
+// Constructor method returns a percentage of the times an image was clicked vs the times it appeared
 ShopItem.prototype.percentClicked = function() {
-  return this.clickCount / this.appearCount;
+  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2) + '%';
 };
-
-// Make instances of the objects with file paths and names
 
 new ShopItem('img/bag.jpg', 'R2D2 suitcase');
 new ShopItem('img/banana.jpg', 'Banana slicer');
@@ -49,31 +44,15 @@ new ShopItem('img/usb.gif', 'USB lizard tail');
 new ShopItem('img/water-can.jpg', 'Watering can');
 new ShopItem('img/wine-glass.jpg', 'Wine glass');
 
-// Make event listener
-
-// callback function in event listener to display three random images when an image is clicked. 
-
-function displayResults() {
-  var pEl;
-  for (var i = 0; i < ShopItem.allItems.length; i++) {
-    pEl = document.createElement('p');
-    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' times.';
-    console.log(pEl.textContent);
-    resultsSection.appendChild(pEl);
-  }
-}
-
+// function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
   if (input === recentItems[0] || input === recentItems[1] || input === recentItems[2]) {
     return true;
   }
 }
 
+// main function for displaying pics based on three random numbers that don't match the previous three pics shown.
 function displayPics() {
-  // I need to keep track of clicks.
-  // I need 3 different random numbers.
-  // I need the random numbers to be different than last time
-
   do {
     var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (matchRandom(randomIndex1));
@@ -86,6 +65,7 @@ function displayPics() {
     var randomIndex3 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2 || matchRandom(randomIndex3));
 
+  // assign src and alt attributes for the three img elements
   imgEl1.src = ShopItem.allItems[randomIndex1].filepath;
   imgEl1.alt = ShopItem.allItems[randomIndex1].name;
   imgEl2.src = ShopItem.allItems[randomIndex2].filepath;
@@ -93,34 +73,52 @@ function displayPics() {
   imgEl3.src = ShopItem.allItems[randomIndex3].filepath;
   imgEl3.alt = ShopItem.allItems[randomIndex3].name;
 
+  // increment the appearCount for each image that appears
   ShopItem.allItems[randomIndex1].appearCount++;
   ShopItem.allItems[randomIndex2].appearCount++;
   ShopItem.allItems[randomIndex3].appearCount++;
 
+  // push the current random numbers to an array which is then sliced to leave just the most recent random numbers
   recentItems.push(randomIndex1, randomIndex2, randomIndex3);
   if (recentItems.length > 3) {
     recentItems = recentItems.slice(3);
   }
-  console.log(recentItems);
 }
 
+// event handler checking which item in the array of objects matches the target
 function handleClick(event) {
-  totalClickCount++;
-  console.log(totalClickCount);
   for (var i = 0; i < ShopItem.allItems.length; i++) {
     if (event.target.src.slice(48) === ShopItem.allItems[i].filepath) {
       ShopItem.allItems[i].clickCount++;
     }
   }
   if (totalClickCount < 25) {
+    totalClickCount++;
     displayPics();
   } else {
     displayResults();
+    imgEl1.removeEventListener('click', handleClick);
+    imgEl2.removeEventListener('click', handleClick);
+    imgEl3.removeEventListener('click', handleClick);
   }
 }
 
+// event listeners
 imgEl1.addEventListener('click', handleClick);
 imgEl2.addEventListener('click', handleClick);
 imgEl3.addEventListener('click', handleClick);
+
+// function for displaying results when totalClickCount reaches 25
+function displayResults() {
+  var h4El = document.createElement('h4');
+  h4El.textContent = 'Results:';
+  resultsSection.appendChild(h4El);
+  var pEl;
+  for (var i = 0; i < ShopItem.allItems.length; i++) {
+    pEl = document.createElement('p');
+    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + ' of the time it appeared.';
+    resultsSection.appendChild(pEl);
+  }
+}
 
 displayPics();
