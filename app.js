@@ -18,8 +18,13 @@ function ShopItem(filepath, name) {
   this.filepath = filepath;
   this.name = name;
   this.clickCount = 0;
+  this.appearCount = 0;
   ShopItem.allItems.push(this);
 }
+
+ShopItem.prototype.percentClicked = function() {
+  return this.clickCount / this.appearCount;
+};
 
 // Make instances of the objects with file paths and names
 
@@ -56,24 +61,30 @@ function displayResults() {
     console.log(pEl.textContent);
     resultsSection.appendChild(pEl);
   }
+}
 
+function matchRandom(input) {
+  if (input === recentItems[0] || input === recentItems[1] || input === recentItems[2]) {
+    return true;
+  }
 }
 
 function displayPics() {
   // I need to keep track of clicks.
   // I need 3 different random numbers.
-  // I need the random numbers to be different than last time.
+  // I need the random numbers to be different than last time
+
   do {
-  var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
-  } while (randomIndex1 === recentItems.every)
+    var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
+  } while (matchRandom(randomIndex1));
   
   do {
     var randomIndex2 = Math.floor(Math.random() * ShopItem.allItems.length);
-  } while (randomIndex1 === randomIndex2);
+  } while (randomIndex1 === randomIndex2 || matchRandom(randomIndex2));
 
   do {
     var randomIndex3 = Math.floor(Math.random() * ShopItem.allItems.length);
-  } while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2);
+  } while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2 || matchRandom(randomIndex3));
 
   imgEl1.src = ShopItem.allItems[randomIndex1].filepath;
   imgEl1.alt = ShopItem.allItems[randomIndex1].name;
@@ -82,11 +93,18 @@ function displayPics() {
   imgEl3.src = ShopItem.allItems[randomIndex3].filepath;
   imgEl3.alt = ShopItem.allItems[randomIndex3].name;
 
-  recentItems.unshift(randomIndex1, randomIndex2, randomIndex3)
+  ShopItem.allItems[randomIndex1].appearCount++;
+  ShopItem.allItems[randomIndex2].appearCount++;
+  ShopItem.allItems[randomIndex3].appearCount++;
+
+  recentItems.push(randomIndex1, randomIndex2, randomIndex3);
+  if (recentItems.length > 3) {
+    recentItems = recentItems.slice(3);
+  }
+  console.log(recentItems);
 }
 
 function handleClick(event) {
-  console.log(event.target.src);
   totalClickCount++;
   console.log(totalClickCount);
   for (var i = 0; i < ShopItem.allItems.length; i++) {
