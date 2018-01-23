@@ -2,6 +2,7 @@
 
 // Make array to store objects
 ShopItem.allItems = [];
+var recentItems = [];
 var totalClickCount = 0;
 // Make variable to access img elements by id
 
@@ -22,12 +23,26 @@ function ShopItem(filepath, name) {
 
 // Make instances of the objects with file paths and names
 
-new ShopItem('img/bag.jpg', 'Bag');
-new ShopItem('img/banana.jpg', 'Banana');
-new ShopItem('img/bathroom.jpg', 'Bathroom');
-new ShopItem('img/boots.jpg', 'Boots');
-new ShopItem('img/breakfast.jpg', 'Breakfast');
-new ShopItem('img/bubblegum.jpg', 'Bubblegum');
+new ShopItem('img/bag.jpg', 'R2D2 suitcase');
+new ShopItem('img/banana.jpg', 'Banana slicer');
+new ShopItem('img/bathroom.jpg', 'Ipad holding toilet paper roll');
+new ShopItem('img/boots.jpg', 'Open toe boots');
+new ShopItem('img/breakfast.jpg', 'Breakfast machine');
+new ShopItem('img/bubblegum.jpg', 'Meatball bubblegum');
+new ShopItem('img/chair.jpg', 'Chair');
+new ShopItem('img/cthulhu.jpg', 'Cthulhu');
+new ShopItem('img/dog-duck.jpg', 'Duck beak on a dog');
+new ShopItem('img/dragon.jpg', 'Dragon meat');
+new ShopItem('img/pen.jpg', 'Blue silverware pen caps');
+new ShopItem('img/pet-sweep.jpg', 'Pet paw mops');
+new ShopItem('img/scissors.jpg', 'Pizza scissors');
+new ShopItem('img/shark.jpg', 'Shark sleeping bag');
+new ShopItem('img/sweep.png', 'Baby sweeping outfit');
+new ShopItem('img/tauntaun.jpg', 'Tauntaun sleeping bag');
+new ShopItem('img/unicorn.jpg', 'Unicorn meat');
+new ShopItem('img/usb.gif', 'USB lizard tail');
+new ShopItem('img/water-can.jpg', 'Watering can');
+new ShopItem('img/wine-glass.jpg', 'Wine glass');
 
 // Make event listener
 
@@ -47,8 +62,11 @@ function displayResults() {
 function displayPics() {
   // I need to keep track of clicks.
   // I need 3 different random numbers.
-  // I need the random numbers to be different than last time. 
+  // I need the random numbers to be different than last time.
+  do {
   var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
+  } while (randomIndex1 === recentItems.every)
+  
   do {
     var randomIndex2 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (randomIndex1 === randomIndex2);
@@ -64,9 +82,11 @@ function displayPics() {
   imgEl3.src = ShopItem.allItems[randomIndex3].filepath;
   imgEl3.alt = ShopItem.allItems[randomIndex3].name;
 
+  recentItems.unshift(randomIndex1, randomIndex2, randomIndex3)
 }
 
 function handleClick(event) {
+  console.log(event.target.src);
   totalClickCount++;
   console.log(totalClickCount);
   for (var i = 0; i < ShopItem.allItems.length; i++) {
@@ -74,7 +94,7 @@ function handleClick(event) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount < 5) {
+  if (totalClickCount < 25) {
     displayPics();
   } else {
     displayResults();
