@@ -82,10 +82,9 @@ function displayPics() {
   ShopItem.allItems[randomIndex3].appearCount++;
 
   // push the current random numbers to an array which is then sliced to leave just the most recent random numbers
-  recentItems.push(randomIndex1, randomIndex2, randomIndex3);
-  if (recentItems.length > 3) {
-    recentItems = recentItems.slice(3);
-  }
+  recentItems[0] = randomIndex1;
+  recentItems[1] = randomIndex2;
+  recentItems[2] = randomIndex3;
 }
 
 // event handler checking which item in the array of objects matches the target
