@@ -2,16 +2,19 @@
 
 // Make array to store objects
 ShopItem.allItems = [];
-
+var totalClickCount;
 // Make variable to access img elements by id
 
-var imgEl = document.getElementById('busmall-item');
+var imgEl1 = document.getElementById('item1');
+var imgEl2 = document.getElementById('item2');
+var imgEl3 = document.getElementById('item3');
 
 // Make Constructor Function
 
 function ShopItem(filepath, name) {
   this.filepath = filepath;
   this.name = name;
+  this.clickCount = 0;
   ShopItem.allItems.push(this);
 }
 
@@ -20,17 +23,57 @@ function ShopItem(filepath, name) {
 new ShopItem('img/bag.jpg', 'Bag');
 new ShopItem('img/banana.jpg', 'Banana');
 new ShopItem('img/bathroom.jpg', 'Bathroom');
+new ShopItem('img/boots.jpg', 'Boots');
+new ShopItem('img/breakfast.jpg', 'Breakfast');
+new ShopItem('img/bubblegum.jpg', 'Bubblegum');
 
-// Make an event listener
-
-imgEl.addEventListener('click', randomPic);
+// Make event listener
 
 // callback function in event listener to display three random images when an image is clicked. 
 
-function randomPic() {
-  var randomIndex = Math.floor(Math.random() * ShopItem.allItems.length);
-  imgEl.src = ShopItem.allItems[randomIndex].filepath;
-  imgEl.alt = ShopItem.allItems[randomIndex].name;
+function displayResults() {
+  
 }
 
-randomPic();
+function displayPics() {
+  // I need to keep track of clicks.
+  // I need 3 different random numbers.
+  // I need the random numbers to be different than last time. 
+  var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
+  do {
+    var randomIndex2 = Math.floor(Math.random() * ShopItem.allItems.length);
+  } while (randomIndex1 === randomIndex2);
+
+  do {
+    var randomIndex3 = Math.floor(Math.random() * ShopItem.allItems.length);
+  } while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2);
+
+  imgEl1.src = ShopItem.allItems[randomIndex1].filepath;
+  imgEl1.alt = ShopItem.allItems[randomIndex1].name;
+  imgEl2.src = ShopItem.allItems[randomIndex2].filepath;
+  imgEl2.alt = ShopItem.allItems[randomIndex2].name;
+  imgEl3.src = ShopItem.allItems[randomIndex3].filepath;
+  imgEl3.alt = ShopItem.allItems[randomIndex3].name;
+
+}
+
+function handleClick(event) {
+  totalClickCount++;
+  console.log(event.target.src);
+  for (var i = 0; i < ShopItem.allItems.length; i++) {
+    if (event.target.src.slice(48) === ShopItem.allItems[i].filepath) {
+      ShopItem.allItems[i].clickCount++;
+    }
+  }
+  if (totalClickCount < 25) {
+    displayPics();
+  } else {
+    displayResults();
+  }
+}
+
+imgEl1.addEventListener('click', handleClick);
+imgEl2.addEventListener('click', handleClick);
+imgEl3.addEventListener('click', handleClick);
+
+displayPics();
