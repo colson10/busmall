@@ -2,8 +2,12 @@
 
 ShopItem.allItems = [];
 var recentItems = [];
+var itemNames = [];
 var totalClickCount = 0;
+var itemVotes = [];
+var itemDisplayCounts = [];
 
+var sectionEl = document.getElementById('items-displayed');
 var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
@@ -16,6 +20,7 @@ function ShopItem(filepath, name) {
   this.clickCount = 0;
   this.appearCount = 0;
   ShopItem.allItems.push(this);
+  itemNames.push(this.name);
 }
 
 // Constructor method returns a percentage of the times an image was clicked vs the times it appeared
@@ -56,11 +61,9 @@ function displayPics() {
   do {
     var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (matchRandom(randomIndex1));
-  
   do {
     var randomIndex2 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (randomIndex1 === randomIndex2 || matchRandom(randomIndex2));
-
   do {
     var randomIndex3 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2 || matchRandom(randomIndex3));
@@ -87,26 +90,76 @@ function displayPics() {
 
 // event handler checking which item in the array of objects matches the target
 function handleClick(event) {
+  console.log(event.target.alt);
+  console.log(totalClickCount);
   for (var i = 0; i < ShopItem.allItems.length; i++) {
-    if (event.target.src.slice(48) === ShopItem.allItems[i].filepath) {
+    if (event.target.alt === ShopItem.allItems[i].name) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount < 25) {
+  if (totalClickCount < 24) {
     totalClickCount++;
     displayPics();
   } else {
+    sectionEl.removeEventListener('click', handleClick);
+    populateItemDisplayCounts();
+    populateItemVotes();
     displayResults();
-    imgEl1.removeEventListener('click', handleClick);
-    imgEl2.removeEventListener('click', handleClick);
-    imgEl3.removeEventListener('click', handleClick);
+    renderChart();
+    
+    // imgEl1.removeEventListener('click', handleClick);
+    // imgEl2.removeEventListener('click', handleClick);
+    // imgEl3.removeEventListener('click', handleClick);
   }
 }
 
+function populateItemVotes() {
+  for (var i in ShopItem.allItems) {
+    itemVotes[i] = ShopItem.allItems[i].clickCount;
+  }
+}
+
+function populateItemDisplayCounts() {
+  for (var i in ShopItem.allItems) {
+    itemDisplayCounts[i] = ShopItem.allItems[i].appearCount;
+  }
+}
+
+function renderChart() {
+  var context = document.getElementById('results-chart').getContext('2d');
+  var itemsChart = new Chart(context, {
+    type: 'bar',
+    data :{
+      labels: itemNames,
+      datasets: [{
+        label: 'Dataset 1: Number of times each item was selected',
+        data: itemVotes,
+        backgroundColor: '#D34FFF',
+      }, {
+        label: 'Dataset 2: Number of times each item was displayed',
+        data: itemDisplayCounts,
+        backgroundColor: '#4FD3FF',
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          categoryPercentage: 0.8,
+          barPercentage: 1.0,
+          ticks: {
+            beginAtZero: true,
+          }
+        }]
+      }
+    }
+  });
+}
+
 // event listeners
-imgEl1.addEventListener('click', handleClick);
-imgEl2.addEventListener('click', handleClick);
-imgEl3.addEventListener('click', handleClick);
+sectionEl.addEventListener('click', handleClick);
+// imgEl1.addEventListener('click', handleClick);
+// imgEl2.addEventListener('click', handleClick);
+// imgEl3.addEventListener('click', handleClick);
 
 // function for displaying results when totalClickCount reaches 25
 function displayResults() {
