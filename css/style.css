@@ -17,3 +17,9 @@ img {
   display: inline-block;
   margin: 50px 30px;
 }
+
+section {
+  width: 70%;
+  margin: 0 15%;
+  text-align: left;
+}
