@@ -2,12 +2,14 @@
 
 // Make array to store objects
 ShopItem.allItems = [];
-var totalClickCount;
+var totalClickCount = 0;
 // Make variable to access img elements by id
 
 var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
+var resultsSection = document.getElementById('results');
+
 
 // Make Constructor Function
 
@@ -32,7 +34,14 @@ new ShopItem('img/bubblegum.jpg', 'Bubblegum');
 // callback function in event listener to display three random images when an image is clicked. 
 
 function displayResults() {
-  
+  var pEl;
+  for (var i = 0; i < ShopItem.allItems.length; i++) {
+    pEl = document.createElement('p');
+    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' times.';
+    console.log(pEl.textContent);
+    resultsSection.appendChild(pEl);
+  }
+
 }
 
 function displayPics() {
@@ -59,13 +68,13 @@ function displayPics() {
 
 function handleClick(event) {
   totalClickCount++;
-  console.log(event.target.src);
+  console.log(totalClickCount);
   for (var i = 0; i < ShopItem.allItems.length; i++) {
     if (event.target.src.slice(48) === ShopItem.allItems[i].filepath) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount < 25) {
+  if (totalClickCount < 5) {
     displayPics();
   } else {
     displayResults();
