@@ -2,8 +2,13 @@
 
 ShopItem.allItems = [];
 var recentItems = [];
+var itemNames = [];
+var itemVotes = [];
+var itemDisplayCounts = [];
+
 var totalClickCount = 0;
 
+var sectionEl = document.getElementById('items-displayed');
 var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
@@ -16,11 +21,13 @@ function ShopItem(filepath, name) {
   this.clickCount = 0;
   this.appearCount = 0;
   ShopItem.allItems.push(this);
+  itemNames.push(this.name);
+  this.percent = 0;
 }
 
 // Constructor method returns a percentage of the times an image was clicked vs the times it appeared
 ShopItem.prototype.percentClicked = function() {
-  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2) + '%';
+  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2);
 };
 
 new ShopItem('img/bag.jpg', 'R2D2 suitcase');
@@ -44,6 +51,19 @@ new ShopItem('img/usb.gif', 'USB lizard tail');
 new ShopItem('img/water-can.jpg', 'Watering can');
 new ShopItem('img/wine-glass.jpg', 'Wine glass');
 
+function fillPercentProperty() {
+  for (var i in ShopItem.allItems) {
+    ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
+  }
+}
+
+// function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to render a chart with top 5 performers.
+function populateOrderByPercent() {
+  ShopItem.allItems.sort(function(a, b) {
+    return (a.percent - b.percent);
+  });
+}
+
 // function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
   if (input === recentItems[0] || input === recentItems[1] || input === recentItems[2]) {
@@ -56,11 +76,9 @@ function displayPics() {
   do {
     var randomIndex1 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (matchRandom(randomIndex1));
-  
   do {
     var randomIndex2 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (randomIndex1 === randomIndex2 || matchRandom(randomIndex2));
-
   do {
     var randomIndex3 = Math.floor(Math.random() * ShopItem.allItems.length);
   } while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2 || matchRandom(randomIndex3));
@@ -79,34 +97,83 @@ function displayPics() {
   ShopItem.allItems[randomIndex3].appearCount++;
 
   // push the current random numbers to an array which is then sliced to leave just the most recent random numbers
-  recentItems.push(randomIndex1, randomIndex2, randomIndex3);
-  if (recentItems.length > 3) {
-    recentItems = recentItems.slice(3);
-  }
+  recentItems[0] = randomIndex1;
+  recentItems[1] = randomIndex2;
+  recentItems[2] = randomIndex3;
 }
 
 // event handler checking which item in the array of objects matches the target
 function handleClick(event) {
+  console.log(event.target.alt);
+  console.log(totalClickCount);
   for (var i = 0; i < ShopItem.allItems.length; i++) {
-    if (event.target.src.slice(48) === ShopItem.allItems[i].filepath) {
+    if (event.target.alt === ShopItem.allItems[i].name) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount < 25) {
+  if (totalClickCount < 24) {
     totalClickCount++;
     displayPics();
   } else {
+    sectionEl.removeEventListener('click', handleClick);
+    populateItemDisplayCounts();
+    populateItemVotes();
+    fillPercentProperty();
     displayResults();
-    imgEl1.removeEventListener('click', handleClick);
-    imgEl2.removeEventListener('click', handleClick);
-    imgEl3.removeEventListener('click', handleClick);
+    renderChart();
+    populateOrderByPercent();
   }
 }
 
-// event listeners
-imgEl1.addEventListener('click', handleClick);
-imgEl2.addEventListener('click', handleClick);
-imgEl3.addEventListener('click', handleClick);
+function populateItemVotes() {
+  for (var i in ShopItem.allItems) {
+    itemVotes[i] = ShopItem.allItems[i].clickCount;
+  }
+}
+
+function populateItemDisplayCounts() {
+  for (var i in ShopItem.allItems) {
+    itemDisplayCounts[i] = ShopItem.allItems[i].appearCount;
+  }
+}
+
+function renderChart() {
+  var context = document.getElementById('results-chart').getContext('2d');
+  var itemsChart = new Chart(context, {
+    type: 'bar',
+    data :{
+      labels: itemNames,
+      datasets: [{
+        label: 'Dataset 1: Number of times each item was selected',
+        data: itemVotes,
+        backgroundColor: '#D34FFF',
+      }, {
+        label: 'Dataset 2: Number of times each item was displayed',
+        data: itemDisplayCounts,
+        backgroundColor: '#4FD3FF',
+      }]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          ticks: {
+            autoSkip: false,
+          }
+        }],
+        yAxes: [{
+          categoryPercentage: 0.8,
+          barPercentage: 1.0,
+          ticks: {
+            beginAtZero: true,
+          }
+        }]
+      }
+    }
+  });
+}
+
+// event listener
+sectionEl.addEventListener('click', handleClick);
 
 // function for displaying results when totalClickCount reaches 25
 function displayResults() {
@@ -116,7 +183,7 @@ function displayResults() {
   var pEl;
   for (var i = 0; i < ShopItem.allItems.length; i++) {
     pEl = document.createElement('p');
-    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + ' of the time it appeared.';
+    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + '% of the time it appeared.';
     resultsSection.appendChild(pEl);
   }
 }

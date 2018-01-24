@@ -26,13 +26,11 @@ img {
   width: 300px;
 }
 
-section {
-  width: 70%;
-  margin: 0 15%;
-  text-align: left;
-}
-
 p {
   line-height: 1.5;
   background-color: rgb(253, 255, 134);
 }
+/* 
+canvas {
+  width: 900px !important;
+} */
