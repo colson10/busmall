@@ -13,6 +13,7 @@ var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
 var resultsSection = document.getElementById('results');
+var bodyEl = document.getElementById('body');
 
 // Constructor
 function ShopItem(filepath, name) {
@@ -57,11 +58,25 @@ function fillPercentProperty() {
   }
 }
 
-// function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to render a chart with top 5 performers.
+// function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to show the top performers.
 function populateOrderByPercent() {
   ShopItem.allItems.sort(function(a, b) {
-    return (a.percent - b.percent);
+    return (b.percent - a.percent);
   });
+}
+// function to display images of the top performers
+function topPerformersImgs() {
+  
+  var h4topEL = document.createElement('h4');
+  h4topEL.textContent = 'Top Performers:';
+  sectionEl.appendChild(h4topEL);
+  for (var i = 0; i < 3; i++) {
+    var topImg = document.createElement('img');
+    topImg.src = ShopItem.allItems[i].filepath;
+    topImg.alt = ShopItem.allItems[i].name;
+    sectionEl.appendChild(topImg);
+  }
+
 }
 
 // function to determine if a number matches one of the numbers in the array recentItems.
@@ -111,10 +126,7 @@ function handleClick(event) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount < 24) {
-    totalClickCount++;
-    displayPics();
-  } else {
+  if (totalClickCount > 24) {
     sectionEl.removeEventListener('click', handleClick);
     populateItemDisplayCounts();
     populateItemVotes();
@@ -122,6 +134,10 @@ function handleClick(event) {
     displayResults();
     renderChart();
     populateOrderByPercent();
+    topPerformersImgs();
+  } else {
+    totalClickCount++;
+    displayPics();
   }
 }
 
@@ -137,11 +153,12 @@ function populateItemDisplayCounts() {
   }
 }
 
+// make a chart with Chart.js to show the clicks and display counts for each item
 function renderChart() {
   var context = document.getElementById('results-chart').getContext('2d');
   var itemsChart = new Chart(context, {
     type: 'bar',
-    data :{
+    data: {
       labels: itemNames,
       datasets: [{
         label: 'Dataset 1: Number of times each item was selected',
