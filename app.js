@@ -13,7 +13,7 @@ var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
 var resultsSection = document.getElementById('results');
-var bodyEl = document.getElementById('body');
+// var bodyEl = document.getElementById('body');
 
 // Constructor
 function ShopItem(filepath, name) {
@@ -31,27 +31,6 @@ ShopItem.prototype.percentClicked = function() {
   return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2);
 };
 
-new ShopItem('img/bag.jpg', 'R2D2 suitcase');
-new ShopItem('img/banana.jpg', 'Banana slicer');
-new ShopItem('img/bathroom.jpg', 'Ipad holding toilet paper roll');
-new ShopItem('img/boots.jpg', 'Open toe boots');
-new ShopItem('img/breakfast.jpg', 'Breakfast machine');
-new ShopItem('img/bubblegum.jpg', 'Meatball bubblegum');
-new ShopItem('img/chair.jpg', 'Chair');
-new ShopItem('img/cthulhu.jpg', 'Cthulhu');
-new ShopItem('img/dog-duck.jpg', 'Duck beak on a dog');
-new ShopItem('img/dragon.jpg', 'Dragon meat');
-new ShopItem('img/pen.jpg', 'Blue silverware pen caps');
-new ShopItem('img/pet-sweep.jpg', 'Pet paw mops');
-new ShopItem('img/scissors.jpg', 'Pizza scissors');
-new ShopItem('img/shark.jpg', 'Shark sleeping bag');
-new ShopItem('img/sweep.png', 'Baby sweeping outfit');
-new ShopItem('img/tauntaun.jpg', 'Tauntaun sleeping bag');
-new ShopItem('img/unicorn.jpg', 'Unicorn meat');
-new ShopItem('img/usb.gif', 'USB lizard tail');
-new ShopItem('img/water-can.jpg', 'Watering can');
-new ShopItem('img/wine-glass.jpg', 'Wine glass');
-
 function fillPercentProperty() {
   for (var i in ShopItem.allItems) {
     ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
@@ -59,25 +38,26 @@ function fillPercentProperty() {
 }
 
 // function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to show the top performers.
-function populateOrderByPercent() {
-  ShopItem.allItems.sort(function(a, b) {
-    return (b.percent - a.percent);
-  });
-}
-// function to display images of the top performers
-function topPerformersImgs() {
-  
-  var h4topEL = document.createElement('h4');
-  h4topEL.textContent = 'Top Performers:';
-  sectionEl.appendChild(h4topEL);
-  for (var i = 0; i < 3; i++) {
-    var topImg = document.createElement('img');
-    topImg.src = ShopItem.allItems[i].filepath;
-    topImg.alt = ShopItem.allItems[i].name;
-    sectionEl.appendChild(topImg);
-  }
 
-}
+// function populateOrderByPercent() {
+//   ShopItem.allItems.sort(function(a, b) {
+//     return (b.percent - a.percent);
+//   });
+// }
+
+// function to display images of the top performers
+
+// function topPerformersImgs() {
+//   var h4topEL = document.createElement('h4');
+//   h4topEL.textContent = 'Top Performers:';
+//   sectionEl.appendChild(h4topEL);
+//   for (var i = 0; i < 3; i++) {
+//     var topImg = document.createElement('img');
+//     topImg.src = ShopItem.allItems[i].filepath;
+//     topImg.alt = ShopItem.allItems[i].name;
+//     sectionEl.appendChild(topImg);
+//   }
+// }
 
 // function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
@@ -131,10 +111,11 @@ function handleClick(event) {
     populateItemDisplayCounts();
     populateItemVotes();
     fillPercentProperty();
+    updateLocalStorage();
     displayResults();
     renderChart();
-    populateOrderByPercent();
-    topPerformersImgs();
+    // populateOrderByPercent();
+    // topPerformersImgs();
   } else {
     totalClickCount++;
     displayPics();
@@ -204,5 +185,35 @@ function displayResults() {
     resultsSection.appendChild(pEl);
   }
 }
+
+// each time the exercise is done, I want to store the vote data locally. This includes item votes,item display counts. 
+
+// check if there is local storage, if there is, add the new counts to it before using data for displaying results.
+
+// start by storing the itemVotes locally. Check the console to see what it shows.
+function updateLocalStorage() {
+  localStorage.accumulatedVotes = itemVotes;
+}
+
+new ShopItem('img/bag.jpg', 'R2D2 suitcase');
+new ShopItem('img/banana.jpg', 'Banana slicer');
+new ShopItem('img/bathroom.jpg', 'Ipad holding toilet paper roll');
+new ShopItem('img/boots.jpg', 'Open toe boots');
+new ShopItem('img/breakfast.jpg', 'Breakfast machine');
+new ShopItem('img/bubblegum.jpg', 'Meatball bubblegum');
+new ShopItem('img/chair.jpg', 'Chair');
+new ShopItem('img/cthulhu.jpg', 'Cthulhu');
+new ShopItem('img/dog-duck.jpg', 'Duck beak on a dog');
+new ShopItem('img/dragon.jpg', 'Dragon meat');
+new ShopItem('img/pen.jpg', 'Blue silverware pen caps');
+new ShopItem('img/pet-sweep.jpg', 'Pet paw mops');
+new ShopItem('img/scissors.jpg', 'Pizza scissors');
+new ShopItem('img/shark.jpg', 'Shark sleeping bag');
+new ShopItem('img/sweep.png', 'Baby sweeping outfit');
+new ShopItem('img/tauntaun.jpg', 'Tauntaun sleeping bag');
+new ShopItem('img/unicorn.jpg', 'Unicorn meat');
+new ShopItem('img/usb.gif', 'USB lizard tail');
+new ShopItem('img/water-can.jpg', 'Watering can');
+new ShopItem('img/wine-glass.jpg', 'Wine glass');
 
 displayPics();
