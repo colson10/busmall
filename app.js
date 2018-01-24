@@ -3,11 +3,10 @@
 ShopItem.allItems = [];
 var recentItems = [];
 var itemNames = [];
-var totalClickCount = 0;
 var itemVotes = [];
 var itemDisplayCounts = [];
-// var orderByPercentage = [];
 
+var totalClickCount = 0;
 
 var sectionEl = document.getElementById('items-displayed');
 var imgEl1 = document.getElementById('item1');
@@ -58,13 +57,12 @@ function fillPercentProperty() {
   }
 }
 
-// function sorting the objects by percentage clicked and returning an array of the objects in that order
-
-// function populateOrderByPercent() {
-//   ShopItem.allItems.sort(function(a, b) {
-//     orderByPercentage.push(a.percent - b.percent);
-//   });
-// }
+// function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to render a chart with top 5 performers.
+function populateOrderByPercent() {
+  ShopItem.allItems.sort(function(a, b) {
+    return (a.percent - b.percent);
+  });
+}
 
 // function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
@@ -121,9 +119,9 @@ function handleClick(event) {
     populateItemDisplayCounts();
     populateItemVotes();
     fillPercentProperty();
-    // populateOrderByPercent();
     displayResults();
     renderChart();
+    populateOrderByPercent();
   }
 }
 
