@@ -6,6 +6,8 @@ var itemNames = [];
 var totalClickCount = 0;
 var itemVotes = [];
 var itemDisplayCounts = [];
+// var orderByPercentage = [];
+
 
 var sectionEl = document.getElementById('items-displayed');
 var imgEl1 = document.getElementById('item1');
@@ -21,11 +23,12 @@ function ShopItem(filepath, name) {
   this.appearCount = 0;
   ShopItem.allItems.push(this);
   itemNames.push(this.name);
+  this.percent = 0;
 }
 
 // Constructor method returns a percentage of the times an image was clicked vs the times it appeared
 ShopItem.prototype.percentClicked = function() {
-  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2) + '%';
+  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2);
 };
 
 new ShopItem('img/bag.jpg', 'R2D2 suitcase');
@@ -48,6 +51,20 @@ new ShopItem('img/unicorn.jpg', 'Unicorn meat');
 new ShopItem('img/usb.gif', 'USB lizard tail');
 new ShopItem('img/water-can.jpg', 'Watering can');
 new ShopItem('img/wine-glass.jpg', 'Wine glass');
+
+function fillPercentProperty() {
+  for (var i in ShopItem.allItems) {
+    ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
+  }
+}
+
+// function sorting the objects by percentage clicked and returning an array of the objects in that order
+
+// function populateOrderByPercent() {
+//   ShopItem.allItems.sort(function(a, b) {
+//     orderByPercentage.push(a.percent - b.percent);
+//   });
+// }
 
 // function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
@@ -103,12 +120,10 @@ function handleClick(event) {
     sectionEl.removeEventListener('click', handleClick);
     populateItemDisplayCounts();
     populateItemVotes();
+    fillPercentProperty();
+    // populateOrderByPercent();
     displayResults();
     renderChart();
-    
-    // imgEl1.removeEventListener('click', handleClick);
-    // imgEl2.removeEventListener('click', handleClick);
-    // imgEl3.removeEventListener('click', handleClick);
   }
 }
 
@@ -142,6 +157,11 @@ function renderChart() {
     },
     options: {
       scales: {
+        xAxes: [{
+          ticks: {
+            autoSkip: false,
+          }
+        }],
         yAxes: [{
           categoryPercentage: 0.8,
           barPercentage: 1.0,
@@ -154,11 +174,8 @@ function renderChart() {
   });
 }
 
-// event listeners
+// event listener
 sectionEl.addEventListener('click', handleClick);
-// imgEl1.addEventListener('click', handleClick);
-// imgEl2.addEventListener('click', handleClick);
-// imgEl3.addEventListener('click', handleClick);
 
 // function for displaying results when totalClickCount reaches 25
 function displayResults() {
@@ -168,7 +185,7 @@ function displayResults() {
   var pEl;
   for (var i = 0; i < ShopItem.allItems.length; i++) {
     pEl = document.createElement('p');
-    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + ' of the time it appeared.';
+    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + '% of the time it appeared.';
     resultsSection.appendChild(pEl);
   }
 }
