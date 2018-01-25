@@ -30,6 +30,14 @@ p {
   line-height: 1.5;
   background-color: rgb(253, 255, 134);
 }
+
+button {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background-color: #7BFF4F;
+  margin: 10px 0 30px;
+  font-size: 20px;
+}
 /* 
 canvas {
   width: 900px !important;
