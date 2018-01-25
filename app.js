@@ -13,7 +13,8 @@ var sectionEl = document.getElementById('items-displayed');
 var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
-var resultsSection = document.getElementById('results');
+var formEl = document.getElementById('form-for-button');
+// var resultsSection = document.getElementById('results');
 // var bodyEl = document.getElementById('body');
 
 // Constructor
@@ -97,42 +98,13 @@ function displayPics() {
   recentItems[1] = randomIndex2;
   recentItems[2] = randomIndex3;
 }
-
-// event handler checking which item in the array of objects matches the target
-function handleClick(event) {
-  console.log(event.target.alt);
-  console.log(totalClickCount);
-  for (var i = 0; i < ShopItem.allItems.length; i++) {
-    if (event.target.alt === ShopItem.allItems[i].name) {
-      ShopItem.allItems[i].clickCount++;
-    }
-  }
-  if (totalClickCount > 9) {
-    sectionEl.removeEventListener('click', handleClick);
-
-    populateItemDisplayCounts();
-    populateItemVotes();
-    // fillPercentProperty();
-    localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
-    localStorage.setItem('names', JSON.stringify(itemNames));
-    // displayResults();
-    renderChart();
-    updateLocalStorage();
-    // populateOrderByPercent();
-    // topPerformersImgs();
-  } else {
-    totalClickCount++;
-    displayPics();
-
-  }
-}
-
+// function that reassigns values in an array with each object's clickCount
 function populateItemVotes() {
   for (var i in ShopItem.allItems) {
     itemVotes[i] = ShopItem.allItems[i].clickCount;
   }
 }
-
+// function that reassigns values in an array with each object's appearCount
 function populateItemDisplayCounts() {
   for (var i in ShopItem.allItems) {
     itemDisplayCounts[i] = ShopItem.allItems[i].appearCount;
@@ -175,10 +147,50 @@ function renderChart() {
   });
 }
 
-// event listener
+// event handler for the submit button. Updates local storage with clicks/appearances at any point the button is clicked
+function handleSubmit(event) {
+  populateItemDisplayCounts();
+  populateItemVotes();
+  localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
+  localStorage.setItem('accumulatedDisplay', JSON.stringify(ShopItem.allItems));
+  localStorage.setItem('names', JSON.stringify(itemNames));
+  checkLocalStorage();
+}
+
+// event handler checking which item in the array of objects matches the target
+function handleClick(event) {
+  console.log(event.target.alt);
+  for (var i = 0; i < ShopItem.allItems.length; i++) {
+    if (event.target.alt === ShopItem.allItems[i].name) {
+      ShopItem.allItems[i].clickCount++;
+    }
+  }
+  if (totalClickCount > 24) {
+    sectionEl.removeEventListener('click', handleClick);
+    populateItemDisplayCounts();
+    populateItemVotes();
+    // fillPercentProperty();
+    localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
+    localStorage.setItem('accumulatedDisplay', JSON.stringify(ShopItem.allItems));
+    localStorage.setItem('names', JSON.stringify(itemNames));
+    // displayResults();
+    renderChart();
+    checkLocalStorage();
+    // populateOrderByPercent();
+    // topPerformersImgs();
+  } else {
+    totalClickCount++;
+    displayPics();
+
+  }
+}
+
+// event listeners
 sectionEl.addEventListener('click', handleClick);
+formEl.addEventListener('submit', handleSubmit);
 
 // function for displaying results when totalClickCount reaches 25
+
 // function displayResults() {
 //   var h4El = document.createElement('h4');
 //   h4El.textContent = 'Results:';
@@ -191,32 +203,12 @@ sectionEl.addEventListener('click', handleClick);
 //   }
 // }
 
-// each time the exercise is done, I want to store the vote data locally. This includes item votes,item display counts.
-
-// check if there is local storage, if there is, add the new counts to it before using data for displaying results.
-
-// start by storing the itemVotes locally. Check the console to see what it shows.
-
-// function updateLocalStorage() {
-
-//   if (localStorage.accumulatedVotes) {
-//     var myLocalStorageArray = JSON.parse(localStorage.accumulatedVotes);
-//     console.log(localStorage.accumulatedVotes);
-//     for (var i in myLocalStorageArray) {
-//       myLocalStorageArray[i] = myLocalStorageArray[i] + itemVotes[i];
-//     }
-//     localStorage.accumulatedVotes = JSON.stringify(myLocalStorageArray);
-
-//   } else {
-//     localStorage.accumulatedVotes = JSON.stringify(itemVotes);
-//     console.log(localStorage.accumulatedVotes);
-//   }
-// }
-
-function updateLocalStorage() {
+// function to check if there is currently local storage. If not, it invokes instantiate. If yes, updates object properties.
+function checkLocalStorage() {
   if (localStorage.accumulatedVotes) {
     console.log('local storage - yes');
     ShopItem.allItems = JSON.parse(localStorage.accumulatedVotes);
+    itemDisplayCounts = JSON.parse(localStorage.accumulatedVotes);
     itemNames = JSON.parse(localStorage.names);
     console.log(itemNames);
     displayPics();
@@ -226,7 +218,7 @@ function updateLocalStorage() {
     displayPics();
   }
 }
-
+// function that creates new ShopItem object instances
 function instantiate() {
   new ShopItem('img/bag.jpg', 'R2D2 suitcase');
   new ShopItem('img/banana.jpg', 'Banana slicer');
@@ -250,5 +242,4 @@ function instantiate() {
   new ShopItem('img/wine-glass.jpg', 'Wine glass');
 }
 
-updateLocalStorage();
-// displayPics();
+checkLocalStorage();
