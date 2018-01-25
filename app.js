@@ -111,10 +111,15 @@ function populateItemDisplayCounts() {
   }
 }
 
+// hide images after 25 clicks
+function removeImages() {
+  sectionEl.setAttribute('class', 'hidden');
+}
+
 // make a chart with Chart.js to show the clicks and display counts for each item
 function renderChart() {
   var context = document.getElementById('results-chart').getContext('2d');
-  var itemsChart = new Chart(context, {
+  var itemsChart = new Chart(context, {//eslint-disable-line
     type: 'bar',
     data: {
       labels: itemNames,
@@ -148,7 +153,7 @@ function renderChart() {
 }
 
 // event handler for the submit button. Updates local storage with clicks/appearances at any point the button is clicked
-function handleSubmit(event) {
+function handleSubmit(event) {//eslint-disable-line
   populateItemDisplayCounts();
   populateItemVotes();
   localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
@@ -166,16 +171,17 @@ function handleClick(event) {
     }
   }
   if (totalClickCount > 24) {
+    
     sectionEl.removeEventListener('click', handleClick);
     populateItemDisplayCounts();
     populateItemVotes();
     // fillPercentProperty();
     localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
-    localStorage.setItem('accumulatedDisplay', JSON.stringify(ShopItem.allItems));
     localStorage.setItem('names', JSON.stringify(itemNames));
     // displayResults();
     renderChart();
     checkLocalStorage();
+    removeImages();
     // populateOrderByPercent();
     // topPerformersImgs();
   } else {
