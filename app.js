@@ -5,6 +5,7 @@ var recentItems = [];
 var itemNames = [];
 var itemVotes = [];
 var itemDisplayCounts = [];
+// var accumulatedVoteCounts = [];
 
 var totalClickCount = 0;
 
@@ -31,11 +32,11 @@ ShopItem.prototype.percentClicked = function() {
   return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2);
 };
 
-function fillPercentProperty() {
-  for (var i in ShopItem.allItems) {
-    ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
-  }
-}
+// function fillPercentProperty() {
+//   for (var i in ShopItem.allItems) {
+//     ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
+//   }
+// }
 
 // function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to show the top performers.
 
@@ -106,19 +107,23 @@ function handleClick(event) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount > 24) {
+  if (totalClickCount > 9) {
     sectionEl.removeEventListener('click', handleClick);
+
     populateItemDisplayCounts();
     populateItemVotes();
-    fillPercentProperty();
-    updateLocalStorage();
-    displayResults();
+    // fillPercentProperty();
+    localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
+    localStorage.setItem('names', JSON.stringify(itemNames));
+    // displayResults();
     renderChart();
+    updateLocalStorage();
     // populateOrderByPercent();
     // topPerformersImgs();
   } else {
     totalClickCount++;
     displayPics();
+
   }
 }
 
@@ -174,46 +179,76 @@ function renderChart() {
 sectionEl.addEventListener('click', handleClick);
 
 // function for displaying results when totalClickCount reaches 25
-function displayResults() {
-  var h4El = document.createElement('h4');
-  h4El.textContent = 'Results:';
-  resultsSection.appendChild(h4El);
-  var pEl;
-  for (var i = 0; i < ShopItem.allItems.length; i++) {
-    pEl = document.createElement('p');
-    pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + '% of the time it appeared.';
-    resultsSection.appendChild(pEl);
-  }
-}
+// function displayResults() {
+//   var h4El = document.createElement('h4');
+//   h4El.textContent = 'Results:';
+//   resultsSection.appendChild(h4El);
+//   var pEl;
+//   for (var i = 0; i < ShopItem.allItems.length; i++) {
+//     pEl = document.createElement('p');
+//     pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + '% of the time it appeared.';
+//     resultsSection.appendChild(pEl);
+//   }
+// }
 
-// each time the exercise is done, I want to store the vote data locally. This includes item votes,item display counts. 
+// each time the exercise is done, I want to store the vote data locally. This includes item votes,item display counts.
 
 // check if there is local storage, if there is, add the new counts to it before using data for displaying results.
 
 // start by storing the itemVotes locally. Check the console to see what it shows.
+
+// function updateLocalStorage() {
+
+//   if (localStorage.accumulatedVotes) {
+//     var myLocalStorageArray = JSON.parse(localStorage.accumulatedVotes);
+//     console.log(localStorage.accumulatedVotes);
+//     for (var i in myLocalStorageArray) {
+//       myLocalStorageArray[i] = myLocalStorageArray[i] + itemVotes[i];
+//     }
+//     localStorage.accumulatedVotes = JSON.stringify(myLocalStorageArray);
+
+//   } else {
+//     localStorage.accumulatedVotes = JSON.stringify(itemVotes);
+//     console.log(localStorage.accumulatedVotes);
+//   }
+// }
+
 function updateLocalStorage() {
-  localStorage.accumulatedVotes = itemVotes;
+  if (localStorage.accumulatedVotes) {
+    console.log('local storage - yes');
+    ShopItem.allItems = JSON.parse(localStorage.accumulatedVotes);
+    itemNames = JSON.parse(localStorage.names);
+    console.log(itemNames);
+    displayPics();
+  } else {
+    console.log('local storage - no');
+    instantiate();
+    displayPics();
+  }
 }
 
-new ShopItem('img/bag.jpg', 'R2D2 suitcase');
-new ShopItem('img/banana.jpg', 'Banana slicer');
-new ShopItem('img/bathroom.jpg', 'Ipad holding toilet paper roll');
-new ShopItem('img/boots.jpg', 'Open toe boots');
-new ShopItem('img/breakfast.jpg', 'Breakfast machine');
-new ShopItem('img/bubblegum.jpg', 'Meatball bubblegum');
-new ShopItem('img/chair.jpg', 'Chair');
-new ShopItem('img/cthulhu.jpg', 'Cthulhu');
-new ShopItem('img/dog-duck.jpg', 'Duck beak on a dog');
-new ShopItem('img/dragon.jpg', 'Dragon meat');
-new ShopItem('img/pen.jpg', 'Blue silverware pen caps');
-new ShopItem('img/pet-sweep.jpg', 'Pet paw mops');
-new ShopItem('img/scissors.jpg', 'Pizza scissors');
-new ShopItem('img/shark.jpg', 'Shark sleeping bag');
-new ShopItem('img/sweep.png', 'Baby sweeping outfit');
-new ShopItem('img/tauntaun.jpg', 'Tauntaun sleeping bag');
-new ShopItem('img/unicorn.jpg', 'Unicorn meat');
-new ShopItem('img/usb.gif', 'USB lizard tail');
-new ShopItem('img/water-can.jpg', 'Watering can');
-new ShopItem('img/wine-glass.jpg', 'Wine glass');
+function instantiate() {
+  new ShopItem('img/bag.jpg', 'R2D2 suitcase');
+  new ShopItem('img/banana.jpg', 'Banana slicer');
+  new ShopItem('img/bathroom.jpg', 'Ipad holding toilet paper roll');
+  new ShopItem('img/boots.jpg', 'Open toe boots');
+  new ShopItem('img/breakfast.jpg', 'Breakfast machine');
+  new ShopItem('img/bubblegum.jpg', 'Meatball bubblegum');
+  new ShopItem('img/chair.jpg', 'Chair');
+  new ShopItem('img/cthulhu.jpg', 'Cthulhu');
+  new ShopItem('img/dog-duck.jpg', 'Duck beak on a dog');
+  new ShopItem('img/dragon.jpg', 'Dragon meat');
+  new ShopItem('img/pen.jpg', 'Blue silverware pen caps');
+  new ShopItem('img/pet-sweep.jpg', 'Pet paw mops');
+  new ShopItem('img/scissors.jpg', 'Pizza scissors');
+  new ShopItem('img/shark.jpg', 'Shark sleeping bag');
+  new ShopItem('img/sweep.png', 'Baby sweeping outfit');
+  new ShopItem('img/tauntaun.jpg', 'Tauntaun sleeping bag');
+  new ShopItem('img/unicorn.jpg', 'Unicorn meat');
+  new ShopItem('img/usb.gif', 'USB lizard tail');
+  new ShopItem('img/water-can.jpg', 'Watering can');
+  new ShopItem('img/wine-glass.jpg', 'Wine glass');
+}
 
-displayPics();
+updateLocalStorage();
+// displayPics();
