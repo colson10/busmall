@@ -5,7 +5,7 @@ var recentItems = [];
 var itemNames = [];
 var itemVotes = [];
 var itemDisplayCounts = [];
-// var accumulatedVoteCounts = [];
+var orderingTopPerformers = [];
 
 var totalClickCount = 0;
 
@@ -14,8 +14,7 @@ var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
 var formEl = document.getElementById('form-for-button');
-// var resultsSection = document.getElementById('results');
-// var bodyEl = document.getElementById('body');
+var topPerformersEL = document.getElementById('top-performers');
 
 // Constructor
 function ShopItem(filepath, name) {
@@ -23,43 +22,46 @@ function ShopItem(filepath, name) {
   this.name = name;
   this.clickCount = 0;
   this.appearCount = 0;
+  this.percent = 0;
   ShopItem.allItems.push(this);
   itemNames.push(this.name);
-  this.percent = 0;
 }
 
-// Constructor method returns a percentage of the times an image was clicked vs the times it appeared
-ShopItem.prototype.percentClicked = function() {
-  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2);
-};
-
-// function fillPercentProperty() {
-//   for (var i in ShopItem.allItems) {
-//     ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
-//   }
-// }
+// function that fills the percent property for all items at the end of each round of clicks
+function fillPercentProperty() {
+  for (var i in ShopItem.allItems) {
+    ShopItem.allItems[i].percent = (parseFloat(ShopItem.allItems[i].clickCount / ShopItem.allItems[i].appearCount) * 100).toFixed(2);
+  }
+}
 
 // function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to show the top performers.
 
-// function populateOrderByPercent() {
-//   ShopItem.allItems.sort(function(a, b) {
-//     return (b.percent - a.percent);
-//   });
-// }
+function populateOrderByPercent() {
+  orderingTopPerformers = ShopItem.allItems;
+  orderingTopPerformers.sort(function(a, b) {
+    return (b.percent - a.percent);
+  });
+}
 
 // function to display images of the top performers
 
-// function topPerformersImgs() {
-//   var h4topEL = document.createElement('h4');
-//   h4topEL.textContent = 'Top Performers:';
-//   sectionEl.appendChild(h4topEL);
-//   for (var i = 0; i < 3; i++) {
-//     var topImg = document.createElement('img');
-//     topImg.src = ShopItem.allItems[i].filepath;
-//     topImg.alt = ShopItem.allItems[i].name;
-//     sectionEl.appendChild(topImg);
-//   }
-// }
+function topPerformersImgs() {
+  var divEl = document.createElement('div');
+  var h4topEL = document.createElement('h4');
+  h4topEL.textContent = 'Top Performers by Percentage Clicked/Shown:';
+  topPerformersEL.appendChild(h4topEL);
+  for (var i = 0; i < 3; i++) {
+    divEl = document.createElement('div');
+    var topImg = document.createElement('img');
+    var pEl = document.createElement('p');
+    topImg.src = orderingTopPerformers[i].filepath;
+    topImg.alt = orderingTopPerformers[i].name;
+    pEl.textContent = orderingTopPerformers[i].name + ': clicked ' + orderingTopPerformers[i].percent + '%';
+    divEl.appendChild(topImg);
+    divEl.appendChild(pEl);
+    topPerformersEL.appendChild(divEl);
+  }
+}
 
 // function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
@@ -111,11 +113,17 @@ function populateItemDisplayCounts() {
   }
 }
 
+// hide images after 25 clicks
+function removeImages() {
+  sectionEl.setAttribute('class', 'hidden');
+}
+
 // make a chart with Chart.js to show the clicks and display counts for each item
 function renderChart() {
   var context = document.getElementById('results-chart').getContext('2d');
-  var itemsChart = new Chart(context, {
+  var itemsChart = new Chart(context, {//eslint-disable-line
     type: 'bar',
+    backgroundColor: '#4FD3FF',
     data: {
       labels: itemNames,
       datasets: [{
@@ -148,7 +156,7 @@ function renderChart() {
 }
 
 // event handler for the submit button. Updates local storage with clicks/appearances at any point the button is clicked
-function handleSubmit(event) {
+function handleSubmit(event) {//eslint-disable-line
   populateItemDisplayCounts();
   populateItemVotes();
   localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
@@ -165,19 +173,20 @@ function handleClick(event) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount > 24) {
+  if (totalClickCount > 23) {
+    
     sectionEl.removeEventListener('click', handleClick);
     populateItemDisplayCounts();
     populateItemVotes();
-    // fillPercentProperty();
     localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
     localStorage.setItem('accumulatedDisplay', JSON.stringify(ShopItem.allItems));
     localStorage.setItem('names', JSON.stringify(itemNames));
-    // displayResults();
+    fillPercentProperty();
+    populateOrderByPercent();
+    topPerformersImgs();
     renderChart();
     checkLocalStorage();
-    // populateOrderByPercent();
-    // topPerformersImgs();
+    removeImages();
   } else {
     totalClickCount++;
     displayPics();
@@ -189,26 +198,12 @@ function handleClick(event) {
 sectionEl.addEventListener('click', handleClick);
 formEl.addEventListener('submit', handleSubmit);
 
-// function for displaying results when totalClickCount reaches 25
-
-// function displayResults() {
-//   var h4El = document.createElement('h4');
-//   h4El.textContent = 'Results:';
-//   resultsSection.appendChild(h4El);
-//   var pEl;
-//   for (var i = 0; i < ShopItem.allItems.length; i++) {
-//     pEl = document.createElement('p');
-//     pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + '% of the time it appeared.';
-//     resultsSection.appendChild(pEl);
-//   }
-// }
-
 // function to check if there is currently local storage. If not, it invokes instantiate. If yes, updates object properties.
 function checkLocalStorage() {
   if (localStorage.accumulatedVotes) {
     console.log('local storage - yes');
     ShopItem.allItems = JSON.parse(localStorage.accumulatedVotes);
-    itemDisplayCounts = JSON.parse(localStorage.accumulatedVotes);
+    itemDisplayCounts = JSON.parse(localStorage.accumulatedDisplay);
     itemNames = JSON.parse(localStorage.names);
     console.log(itemNames);
     displayPics();
@@ -218,6 +213,7 @@ function checkLocalStorage() {
     displayPics();
   }
 }
+
 // function that creates new ShopItem object instances
 function instantiate() {
   new ShopItem('img/bag.jpg', 'R2D2 suitcase');
@@ -242,4 +238,5 @@ function instantiate() {
   new ShopItem('img/wine-glass.jpg', 'Wine glass');
 }
 
+// single function being called to first check if there is local storage
 checkLocalStorage();

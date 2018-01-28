@@ -2,6 +2,13 @@ body {
   text-align: center;
 }
 
+h1 {
+  font-size: 28px;
+  margin: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+}
+
 h2 {
   font-size: 24px;
   margin: 20px;
@@ -10,9 +17,11 @@ h2 {
 }
 
 h4 {
-  font-size: 20px;
+  font-size: 24px;
+  text-decoration: underline;
   text-align: center;
   font-weight: bold;
+  margin-top: 30px;
 }
 
 hr {
@@ -23,12 +32,11 @@ img {
   display: inline-block;
   margin: 50px 30px;
   vertical-align: top;
-  width: 300px;
+  width: 250px;
 }
 
 p {
   line-height: 1.5;
-  background-color: rgb(253, 255, 134);
 }
 
 button {
@@ -38,7 +46,22 @@ button {
   margin: 10px 0 30px;
   font-size: 20px;
 }
-/* 
-canvas {
-  width: 900px !important;
-} */
+
+div {
+  display: inline-block;
+}
+
+.hidden {
+  display: none;
+}
+
+#top-performers {
+  margin: 10px 0;
+  background-color: #7BFF4F;
+  padding-top: 20px;
+}
+
+#top-performers p {
+  margin-bottom: 30px;
+  font-weight: bold;
+}
