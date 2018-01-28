@@ -5,6 +5,7 @@ var recentItems = [];
 var itemNames = [];
 var itemVotes = [];
 var itemDisplayCounts = [];
+var orderingTopPerformers = [];
 // var accumulatedVoteCounts = [];
 
 var totalClickCount = 0;
@@ -14,8 +15,7 @@ var imgEl1 = document.getElementById('item1');
 var imgEl2 = document.getElementById('item2');
 var imgEl3 = document.getElementById('item3');
 var formEl = document.getElementById('form-for-button');
-// var resultsSection = document.getElementById('results');
-// var bodyEl = document.getElementById('body');
+var topPerformersEL = document.getElementById('top-performers');
 
 // Constructor
 function ShopItem(filepath, name) {
@@ -23,43 +23,54 @@ function ShopItem(filepath, name) {
   this.name = name;
   this.clickCount = 0;
   this.appearCount = 0;
+  this.percent = 0;
   ShopItem.allItems.push(this);
   itemNames.push(this.name);
-  this.percent = 0;
 }
 
 // Constructor method returns a percentage of the times an image was clicked vs the times it appeared
-ShopItem.prototype.percentClicked = function() {
-  return (parseFloat(this.clickCount / this.appearCount) * 100).toFixed(2);
-};
+// ShopItem.prototype.percentClicked = function() {
+//   return 
+// };
 
-// function fillPercentProperty() {
+// function populateNamesArray() {
 //   for (var i in ShopItem.allItems) {
-//     ShopItem.allItems[i].percent = ShopItem.allItems[i].percentClicked();
+//     itemNames.push(ShopItem.allItems[i].name);
 //   }
 // }
+
+function fillPercentProperty() {
+  for (var i in ShopItem.allItems) {
+    ShopItem.allItems[i].percent = (parseFloat(ShopItem.allItems[i].clickCount / ShopItem.allItems[i].appearCount) * 100).toFixed(2);
+  }
+}
 
 // function sorting the objects by percentage clicked and returning an array of the objects in that order. Reorders ShopItem.allItems so it is called last. Will use this to show the top performers.
 
-// function populateOrderByPercent() {
-//   ShopItem.allItems.sort(function(a, b) {
-//     return (b.percent - a.percent);
-//   });
-// }
+function populateOrderByPercent() {
+  orderingTopPerformers = ShopItem.allItems;
+  orderingTopPerformers.sort(function(a, b) {
+    return (b.percent - a.percent);
+  });
+}
 
 // function to display images of the top performers
 
-// function topPerformersImgs() {
-//   var h4topEL = document.createElement('h4');
-//   h4topEL.textContent = 'Top Performers:';
-//   sectionEl.appendChild(h4topEL);
-//   for (var i = 0; i < 3; i++) {
-//     var topImg = document.createElement('img');
-//     topImg.src = ShopItem.allItems[i].filepath;
-//     topImg.alt = ShopItem.allItems[i].name;
-//     sectionEl.appendChild(topImg);
-//   }
-// }
+function topPerformersImgs() {
+  var h4topEL = document.createElement('h4');
+  h4topEL.textContent = 'Top Performers by Percentage Clicked/Shown:';
+  topPerformersEL.appendChild(h4topEL);
+  for (var i = 0; i < 3; i++) {
+    var topImg = document.createElement('img');
+    var pEl = document.createElement('p');
+    topImg.src = orderingTopPerformers[i].filepath;
+    topImg.alt = orderingTopPerformers[i].name;
+    pEl.textContent = orderingTopPerformers[i].name + ': clicked ' + orderingTopPerformers[i].percent + '%';
+    topPerformersEL.appendChild(topImg);
+    topPerformersEL.appendChild(pEl);
+
+  }
+}
 
 // function to determine if a number matches one of the numbers in the array recentItems.
 function matchRandom(input) {
@@ -121,6 +132,7 @@ function renderChart() {
   var context = document.getElementById('results-chart').getContext('2d');
   var itemsChart = new Chart(context, {//eslint-disable-line
     type: 'bar',
+    backgroundColor: '#4FD3FF',
     data: {
       labels: itemNames,
       datasets: [{
@@ -170,20 +182,20 @@ function handleClick(event) {
       ShopItem.allItems[i].clickCount++;
     }
   }
-  if (totalClickCount > 24) {
+  if (totalClickCount > 23) {
     
     sectionEl.removeEventListener('click', handleClick);
     populateItemDisplayCounts();
     populateItemVotes();
-    // fillPercentProperty();
     localStorage.setItem('accumulatedVotes', JSON.stringify(ShopItem.allItems));
+    localStorage.setItem('accumulatedDisplay', JSON.stringify(ShopItem.allItems));
     localStorage.setItem('names', JSON.stringify(itemNames));
-    // displayResults();
+    fillPercentProperty();
+    populateOrderByPercent();
+    topPerformersImgs();
     renderChart();
     checkLocalStorage();
     removeImages();
-    // populateOrderByPercent();
-    // topPerformersImgs();
   } else {
     totalClickCount++;
     displayPics();
@@ -214,7 +226,7 @@ function checkLocalStorage() {
   if (localStorage.accumulatedVotes) {
     console.log('local storage - yes');
     ShopItem.allItems = JSON.parse(localStorage.accumulatedVotes);
-    itemDisplayCounts = JSON.parse(localStorage.accumulatedVotes);
+    itemDisplayCounts = JSON.parse(localStorage.accumulatedDisplay);
     itemNames = JSON.parse(localStorage.names);
     console.log(itemNames);
     displayPics();
