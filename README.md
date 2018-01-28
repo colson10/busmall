@@ -17,6 +17,6 @@ I added a button to restart the 25 clicks, and if the user clicks the button bef
 Finally, I added a top performers section at the bottom, which displays the top 3 products by percentage clicked/displayed. 
 
 
-<img width="1244" alt="screen shot 2018-01-28 at 2 15 36 pm" src="https://user-images.githubusercontent.com/33847838/35487888-015880e8-0436-11e8-8b49-fd56dc9acb30.png">
-<img width="1247" alt="screen shot 2018-01-28 at 2 16 00 pm" src="https://user-images.githubusercontent.com/33847838/35487889-03235858-0436-11e8-90d7-f84095596bdd.png">
-<img width="1247" alt="screen shot 2018-01-28 at 2 16 45 pm" src="https://user-images.githubusercontent.com/33847838/35487891-04f89030-0436-11e8-8bb4-f5114f8cb435.png">
+<img width="1245" alt="screen shot 2018-01-28 at 2 46 13 pm" src="https://user-images.githubusercontent.com/33847838/35488239-2e323ace-043a-11e8-981f-549da431cf2c.png">
+<img width="1252" alt="screen shot 2018-01-28 at 2 46 48 pm" src="https://user-images.githubusercontent.com/33847838/35488241-31aef296-043a-11e8-8cfc-c5c20cc5a727.png">
+<img width="1247" alt="screen shot 2018-01-28 at 2 47 03 pm" src="https://user-images.githubusercontent.com/33847838/35488242-33791de0-043a-11e8-9149-ad149eae59b2.png">
