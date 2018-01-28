@@ -17,7 +17,8 @@ h2 {
 }
 
 h4 {
-  font-size: 20px;
+  font-size: 24px;
+  text-decoration: underline;
   text-align: center;
   font-weight: bold;
   margin-top: 30px;
@@ -31,16 +32,12 @@ img {
   display: inline-block;
   margin: 50px 30px;
   vertical-align: top;
-  width: 300px;
+  width: 250px;
 }
 
 p {
   line-height: 1.5;
 }
-
-/* canvas {
-  background-color: #7BFF4F;
-} */
 
 button {
   padding: 10px 20px;
@@ -50,11 +47,21 @@ button {
   font-size: 20px;
 }
 
+div {
+  display: inline-block;
+}
+
 .hidden {
   display: none;
 }
 
-.top-performers img {
-  height: 100px;
-  display: inline-block;
+#top-performers {
+  margin: 10px 0;
+  background-color: #7BFF4F;
+  padding-top: 20px;
+}
+
+#top-performers p {
+  margin-bottom: 30px;
+  font-weight: bold;
 }
