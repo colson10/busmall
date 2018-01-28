@@ -6,7 +6,6 @@ var itemNames = [];
 var itemVotes = [];
 var itemDisplayCounts = [];
 var orderingTopPerformers = [];
-// var accumulatedVoteCounts = [];
 
 var totalClickCount = 0;
 
@@ -28,17 +27,7 @@ function ShopItem(filepath, name) {
   itemNames.push(this.name);
 }
 
-// Constructor method returns a percentage of the times an image was clicked vs the times it appeared
-// ShopItem.prototype.percentClicked = function() {
-//   return 
-// };
-
-// function populateNamesArray() {
-//   for (var i in ShopItem.allItems) {
-//     itemNames.push(ShopItem.allItems[i].name);
-//   }
-// }
-
+// function that fills the percent property for all items at the end of each round of clicks
 function fillPercentProperty() {
   for (var i in ShopItem.allItems) {
     ShopItem.allItems[i].percent = (parseFloat(ShopItem.allItems[i].clickCount / ShopItem.allItems[i].appearCount) * 100).toFixed(2);
@@ -57,18 +46,20 @@ function populateOrderByPercent() {
 // function to display images of the top performers
 
 function topPerformersImgs() {
+  var divEl = document.createElement('div');
   var h4topEL = document.createElement('h4');
   h4topEL.textContent = 'Top Performers by Percentage Clicked/Shown:';
   topPerformersEL.appendChild(h4topEL);
   for (var i = 0; i < 3; i++) {
+    divEl = document.createElement('div');
     var topImg = document.createElement('img');
     var pEl = document.createElement('p');
     topImg.src = orderingTopPerformers[i].filepath;
     topImg.alt = orderingTopPerformers[i].name;
     pEl.textContent = orderingTopPerformers[i].name + ': clicked ' + orderingTopPerformers[i].percent + '%';
-    topPerformersEL.appendChild(topImg);
-    topPerformersEL.appendChild(pEl);
-
+    divEl.appendChild(topImg);
+    divEl.appendChild(pEl);
+    topPerformersEL.appendChild(divEl);
   }
 }
 
@@ -207,20 +198,6 @@ function handleClick(event) {
 sectionEl.addEventListener('click', handleClick);
 formEl.addEventListener('submit', handleSubmit);
 
-// function for displaying results when totalClickCount reaches 25
-
-// function displayResults() {
-//   var h4El = document.createElement('h4');
-//   h4El.textContent = 'Results:';
-//   resultsSection.appendChild(h4El);
-//   var pEl;
-//   for (var i = 0; i < ShopItem.allItems.length; i++) {
-//     pEl = document.createElement('p');
-//     pEl.textContent = 'The ' + ShopItem.allItems[i].name + ' image was selected a total of ' + ShopItem.allItems[i].clickCount + ' out of ' + ShopItem.allItems[i].appearCount + ': ' + ShopItem.allItems[i].percentClicked() + '% of the time it appeared.';
-//     resultsSection.appendChild(pEl);
-//   }
-// }
-
 // function to check if there is currently local storage. If not, it invokes instantiate. If yes, updates object properties.
 function checkLocalStorage() {
   if (localStorage.accumulatedVotes) {
@@ -236,6 +213,7 @@ function checkLocalStorage() {
     displayPics();
   }
 }
+
 // function that creates new ShopItem object instances
 function instantiate() {
   new ShopItem('img/bag.jpg', 'R2D2 suitcase');
@@ -260,4 +238,5 @@ function instantiate() {
   new ShopItem('img/wine-glass.jpg', 'Wine glass');
 }
 
+// single function being called to first check if there is local storage
 checkLocalStorage();
