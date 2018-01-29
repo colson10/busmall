@@ -2,7 +2,7 @@
 
 # Week 3 project for Code Fellows 201.
 
-Screenshots below, and the full site can be seen here: https://colson10.github.io/busmall/
+Screenshots below. Full site can be seen here: https://colson10.github.io/busmall/
 
 I was tasked with creating a web app for a fictional startup: BusMall. They wanted an app that could capture data about which products focus group participants would be most likely to purchase.
 
